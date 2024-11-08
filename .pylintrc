@@ -1,0 +1,17 @@
+[main]
+jobs=1
+py-version=3.10
+
+[format]
+indent-string='    '
+max-line-length=122
+max-module-lines=1500
+
+[design]
+min-public-methods=1
+max-attributes=30
+max-args=10
+class-const-naming-style=snake_case
+
+[messages control]
+disable=C0111,C0209,W0511,C0301
