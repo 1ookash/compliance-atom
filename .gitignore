@@ -12,6 +12,7 @@
 !pyproject.toml
 !.env_example
 !.python-version
+!README.md
 
 !*/**/*.py
 !*/**/*.sql
