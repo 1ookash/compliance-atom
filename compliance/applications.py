@@ -102,9 +102,9 @@ class Application:
         output_df.to_sql(name='compliance', con=self._db_connect, if_exists='append', index=False)
         self._db_connect.commit()
         self._db_connect.close()
-        if self._output_file_fpath[self._output_file_fpath.rfind(',') + 1 :] == 'xlsx':
+        if self._output_file_fpath[self._output_file_fpath.rfind('.') + 1 :] == 'xlsx':
             output_df.to_excel(self._output_file_fpath)
-        if self._output_file_fpath[self._output_file_fpath.rfind(',') + 1 :] == 'csv':
+        if self._output_file_fpath[self._output_file_fpath.rfind('.') + 1 :] == 'csv':
             output_df.to_csv(self._output_file_fpath)
 
         self._logger.debug('run end')
