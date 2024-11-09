@@ -14,7 +14,7 @@ test-env:
 
 run-llm:
 	@cd src; \
-	uvicorn qwen_main:app --reload --host 0.0.0.0 --port 8000
+	nohup uvicorn qwen_main:app --reload --host 0.0.0.0 --port 8000 2>&1 &
 	# port forward 
 	# netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=8000 connectaddress=<WSL_IP> connectport=8000
 	# port proxy list
