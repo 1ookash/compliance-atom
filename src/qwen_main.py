@@ -52,7 +52,7 @@ def ask_question(query: Query):
         
         # Decode generated response
         response = tokenizer.decode(generated_ids[0], 
-                                    skip_special_tokens=True)[0]
+                                    skip_special_tokens=True)
         
         return {"answer": response}
     except Exception as e:
