@@ -1,6 +1,8 @@
 import argparse
 import os
+import sqlite3
 
+from .config import CONFIG
 from .dtos import OutputCreatorDTO
 from .input_reader import InputReader
 from .metric_calculator import MetricCalculator
@@ -13,6 +15,8 @@ class Application:
     def __init__(self) -> None:
         logger.start_streams(log_root='root', stderr_f=False)
         self._logger = logger.nest_obj_logger(self)
+
+        self._db_connect = sqlite3.connect(CONFIG.db_fpath)
         self._input_reader = InputReader()
         self._model_inference = ModelInference()
         self._metric_calculator = MetricCalculator()
@@ -55,18 +59,18 @@ class Application:
         )
 
     def run(self) -> None:
-        if self._input_file_fpath[-4:] != '.zip':
+        if self._input_file_fpath[self._input_file_fpath.rfind('.') + 1 :] != 'zip':
             self._logger.warning(
                 'Входной файл должен быть в разрешении .zip',
                 params_please={'input file fpath': self._input_file_fpath},
             )
             raise RuntimeError('Входной файл должен быть в разрешении .zip')
-        if self._output_file_fpath[-5:] != '.xlsx':
+        if self._output_file_fpath[self._output_file_fpath.rfind('.') + 1 :] not in ('xlsx', 'csv'):
             self._logger.warning(
-                'Выходной файл должен быть в разрешении .xlsx',
+                'Выходной файл должен быть в разрешении .xlsx или .csv',
                 params_please={'output file fpath': self._output_file_fpath},
             )
-            raise RuntimeError('Выходной файл должен быть в разрешении .xlsx')
+            raise RuntimeError('Выходной файл должен быть в разрешении .xlsx или .csv')
         if not os.path.exists(self._input_file_fpath):
             self._logger.warning(
                 'Указанный входной файл не найден',
@@ -95,6 +99,12 @@ class Application:
             )
         )
 
-        output_df.to_excel(self._output_file_fpath)
+        output_df.to_sql(name='compliance', con=self._db_connect, if_exists='append', index=False)
+        self._db_connect.commit()
+        self._db_connect.close()
+        if self._output_file_fpath[self._output_file_fpath.rfind(',') + 1 :] == 'xlsx':
+            output_df.to_excel(self._output_file_fpath)
+        if self._output_file_fpath[self._output_file_fpath.rfind(',') + 1 :] == 'csv':
+            output_df.to_csv(self._output_file_fpath)
 
         self._logger.debug('run end')
