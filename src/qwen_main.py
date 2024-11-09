@@ -49,10 +49,12 @@ def ask_question(query: Query):
             do_sample=True,  # Optional: enable sampling for more varied responses
             temperature=0.7  # Adjust temperature for creativity (lower = more focused, higher = more creative)
         )
+        generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)]
         
         # Decode generated response
-        response = tokenizer.batch_decode(generated_ids[0],
-                                          skip_special_tokens=True)
+        response = tokenizer.decode(generated_ids[0],
+                                    skip_special_tokens=True,
+                                    )
         
         return {"answer": response}
     except Exception as e:
