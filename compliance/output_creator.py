@@ -1,6 +1,6 @@
 import pandas
 
-from src.dtos import OutputCreatorDTO
+from .dtos import OutputCreatorDTO
 
 
 class OutputCreator:

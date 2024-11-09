@@ -1,4 +1,4 @@
-from src.dtos import ModelInputDTO, ModelOutputDTO
+from .dtos import ModelInputDTO, ModelOutputDTO
 
 
 class ModelInference:

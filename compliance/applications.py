@@ -1,11 +1,11 @@
 import argparse
 import os
 
-from src.dtos import OutputCreatorDTO
-from src.input_reader import InputReader
-from src.metric_calculator import MetricCalculator
-from src.model_inference import ModelInference
-from src.output_creator import OutputCreator
+from .dtos import OutputCreatorDTO
+from .input_reader import InputReader
+from .metric_calculator import MetricCalculator
+from .model_inference import ModelInference
+from .output_creator import OutputCreator
 
 
 class Application:

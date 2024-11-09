@@ -1,4 +1,4 @@
-from src.dtos import MetricCalculatorDTO, ModelOutputDTO
+from .dtos import MetricCalculatorDTO, ModelOutputDTO
 
 
 class MetricCalculator:

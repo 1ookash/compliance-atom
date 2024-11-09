@@ -1,5 +1,5 @@
 [tool.poetry]
-package-mode = false
+package-mode = true
 name = "compliance-atom"
 version = "1.0.0"
 description = "Automatic compliance"
@@ -12,6 +12,7 @@ authors = [
 ]
 license = "MIT"
 readme = "README.md"
+packages = [{include = "compliance"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -38,6 +39,13 @@ pandas-stubs = "^2.2.2.240603"
 matplotlib = "^3.9.1"
 seaborn = "^0.13.2"
 tqdm = "^4.66.5"
+
+[tool.poetry.scripts]
+compliance = 'compliance.main:main'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.2.2"
