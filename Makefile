@@ -21,3 +21,6 @@ run-llm:
 	# netsh interface portproxy show all
 	# port proxy delete
 	# netsh interface portproxy delete v4tov4 listenaddress=<WSL_IP> listenport=8000
+
+stop-llm:
+	@pkill -9 -f uvicorn

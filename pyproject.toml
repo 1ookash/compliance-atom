@@ -28,6 +28,8 @@ transformers = "^4.46.2"
 accelerate = "^1.1.1"
 fastapi = "^0.115.4"
 uvicorn = "^0.32.0"
+auto-gptq = "^0.7.1"
+optimum = "^1.23.3"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.10.1"
