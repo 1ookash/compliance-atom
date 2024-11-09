@@ -110,7 +110,7 @@ class ModelInference:
             detailed_difference.append(
                 ModelAnswerDetailedDTO(
                     category=detailed['Category'],  # type: ignore
-                    difference=detailed['Differences'],  # type: ignore
+                    difference=detailed['Difference'],  # type: ignore
                     difference_source=detailed['Source'],  # type: ignore
                 )
             )
