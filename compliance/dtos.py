@@ -53,7 +53,7 @@ class MetricCalculatorDTO:
     difference: str
     description: str
     compliance_level: COMPLIANCE_LEVEL
-    value: float
+    value: float | None
 
 
 @dataclass(config=pydantic.ConfigDict(frozen=True, strict=True, extra='forbid'))
