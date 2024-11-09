@@ -46,7 +46,7 @@ def ask_question(query: Query):
         generated_ids = model.generate(
             **model_inputs,
             max_new_tokens=512,
-            do_sample=True,  # Optional: enable sampling for more varied responses
+            do_sample=False,  # Optional: enable sampling for more varied responses
             temperature=0.7  # Adjust temperature for creativity (lower = more focused, higher = more creative)
         )
         
