@@ -15,7 +15,9 @@ COMPLIANCE_LEVEL = (
 @dataclass(config=pydantic.ConfigDict(frozen=True, strict=True, extra='forbid'))
 class ModelInputDTO:
     reference: str
+    reference_tokens_cnt: int
     source: str | None
+    source_tokens_cnt: int | None
     reference_name: str
     doc_number: int
 

@@ -10,10 +10,15 @@ import docx
 from docx.opc.exceptions import PackageNotFoundError
 
 from .dtos import InputReaderDTO, ModelInputDTO
+from .tools import logger
 
 
 class InputReader:
+    def __init__(self) -> None:
+        self._logger = logger.nest_obj_logger(self)
+
     def extract(self, input_file_path: str) -> InputReaderDTO:
+        self._logger.debug('extract begin')
         source_result = {}
         reference_result = {}
         result = []
@@ -37,7 +42,9 @@ class InputReader:
                 result.append(
                     ModelInputDTO(
                         reference=value,
+                        reference_tokens_cnt=len(value),
                         source=None,
+                        source_tokens_cnt=None,
                         doc_number=key,
                         reference_name=reference_name,
                     )
@@ -46,12 +53,15 @@ class InputReader:
             result.append(
                 ModelInputDTO(
                     reference=value,
+                    reference_tokens_cnt=len(value),
                     source=source,
+                    source_tokens_cnt=len(source),
                     doc_number=key,
                     reference_name=reference_name,
                 )
             )
 
+        self._logger.debug('extract end', params_please={'document count': len(result)})
         return InputReaderDTO(result=result, doc_cnt=len(result))
 
     def _read_docx(self, path: str) -> str:
