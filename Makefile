@@ -1,10 +1,8 @@
 .EXPORT_ALL_VARIABLES:
 SHELL=/bin/bash
 PROJECT_DIR=/app
-DOCKER_LLM_APP_IMAGE=ghcr.io/akkrevsky/parser_ozon:latest
-DOCKER_LLM_APP_CONTAINER=parser_ozon
 PYTHONPATH=$(shell pwd)
-ENV_FILE = ./config/.env
+ENV_FILE = .env
 
 ifneq (,$(wildcard $(ENV_FILE)))
 	include $(ENV_FILE)
