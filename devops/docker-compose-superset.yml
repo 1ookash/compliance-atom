@@ -1,0 +1,49 @@
+#TODO: удалить пароль админки
+services:
+  superset:
+    image: apache/superset
+    env_file:
+      - ../config/.env
+    container_name: superset
+    ports:
+      - '8088:8088'
+    environment:
+      SUPERSET_SECRET_KEY: $(SUPERSET_PASSWORD)
+    depends_on:
+      - postgres
+    # накатываем миграции alembic
+    # sqlalchemistry 1.5
+    # инициализируем БД
+    # создаем админа
+    # запускаем flask во вне
+    command: >
+        /bin/sh -c "superset db upgrade \
+        && superset init 
+        && superset fab create-admin \
+        --username admin \
+        --password YWRtaW46YWRtaW4 \
+        --firstname Admin \
+        --lastname Admin \
+        --email sumvolika@bk.ru \
+        && superset init \
+        && superset run -p 8088 --host 0.0.0.0 --with-threads --reload --debugger \
+        "
+    networks:
+      - pg-net
+
+  postgres:
+    image: library/postgres:13
+    volumes:
+      - /home/akrevskiy/superset_pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    # не светить порт во вне
+    # ports:
+    #   - '5432:5432' 
+    restart: always
+    networks:
+      - pg-net
+
+networks:
+  pg-net:
