@@ -95,7 +95,8 @@ system_promt_template = dedent(
         - displays the hotline number of roadside assistance call.";
         "Complience Level":"NC";
         }
-        And json with difference between UC and STSS and grade of it and where did it occur in the text Preconditions, Main Scenario, Postconditions, Alternative Scenario. Category need to be one of this  Preconditions, Main Scenario, Postconditions, Alternative Scenario and NA. Each category can have several items.I need a field in json where more information is found in UC, STSS or both
+        And json with difference between UC and STSS and grade of it and where did it occur in the text Preconditions, Main Scenario, Postconditions, Alternative Scenario. Category need to be one of this  Preconditions, Main Scenario, Postconditions, Alternative Scenario and NA. Each category can have several items.I need a field with name "Source" in json where more information is found in UC, STSS or both
+
     '''
 )
 

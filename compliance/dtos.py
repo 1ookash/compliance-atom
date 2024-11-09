@@ -33,7 +33,6 @@ class ModelAnswerDetailedDTO:
     category: str
     difference: str
     difference_source: str
-    compliance_level: COMPLIANCE_LEVEL
 
 
 @dataclass(config=pydantic.ConfigDict(frozen=True, strict=True, extra='forbid'))

@@ -65,7 +65,10 @@ class ModelInference:
             },
             # timeout=timedelta(hours=2).total_seconds(),
         )
-        self._logger.debug('response', params_please={'response status': response.status_code})
+        self._logger.debug(
+            'response',
+            params_please={'response status': response.status_code},
+        )
 
         try:
             result = self._parse_anwser(response.text)
@@ -100,15 +103,15 @@ class ModelInference:
 
     def _parse_anwser(self, answer_raw: str) -> ModelOutputDTO:
         answer = json.loads(answer_raw)['answer']
+        answer = json.loads(answer[answer.find('{') : answer.rfind('}') + 1])
 
         detailed_difference = []
         for detailed in answer['Details']:  # type: ignore
             detailed_difference.append(
                 ModelAnswerDetailedDTO(
                     category=detailed['Category'],  # type: ignore
-                    difference=detailed['Difference'],  # type: ignore
+                    difference=detailed['Differences'],  # type: ignore
                     difference_source=detailed['Source'],  # type: ignore
-                    compliance_level=answer['Grade'],  # type: ignore
                 )
             )
 
