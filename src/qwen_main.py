@@ -2,13 +2,17 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+#TODO: сделать авторизацию по токену
+#TODO: вынести пути в конфиг (закрыть порты ufw)
+#TODO: сделать разные роуты для сохранения диалога/ нового
+
 # Initialize FastAPI app
 app = FastAPI()
 
 # Load Qwen-like model and tokenizer (adjust paths/names as needed)
 model_name = "Qwen/Qwen2.5-14B-Instruct"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained('/user1/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-14B-Instruct/snapshots/cf98f3b3bbb457ad9e2bb7baf9a0125b6b88caa8')
+model = AutoModelForCausalLM.from_pretrained('/home/user1/.cache/huggingface/hub/models--Qwen--Qwen2.5-14B-Instruct/snapshots/cf98f3b3bbb457ad9e2bb7baf9a0125b6b88caa8')
 
 
 # Pydantic model for request
@@ -27,7 +31,7 @@ def ask_question(query: Query):
         text = tokenizer.apply_chat_template(messages,
                                              tokenize=False,
                                              add_generation_prompt=True)
-        model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
+        model_inputs = tokenizer([text], return_tensors="pt").to('cuda')
         generated_ids = model.generate(**model_inputs,
                                        max_new_tokens=512
                                        )
