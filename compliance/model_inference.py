@@ -118,7 +118,7 @@ class ModelInference:
         return ModelOutputDTO(
             doc_number=int(answer['Number']),  # type: ignore
             reference_name=answer['Name'],  # type: ignore
-            difference=answer['Difference'],  # type: ignore
+            difference=answer['Differences'],  # type: ignore
             description=answer['Description'],  # type: ignore
             compliance_level=answer['Compliance Level'],  # type: ignore
             detailed_difference=detailed_difference,
