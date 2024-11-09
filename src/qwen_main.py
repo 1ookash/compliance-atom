@@ -31,8 +31,8 @@ def ask_question(query: Query):
     try:
         # Create a standalone dialog context for each query
         messages = [
-            {"role": "system", "content": query.system_prompt},
-            {"role": "user", "content": query.user_prompt}
+            {"role": "system", "content": query.system_promt},
+            {"role": "user", "content": query.user_promt}
         ]
 
         # Convert messages to input text for the model
