@@ -86,16 +86,16 @@ system_promt_template = dedent(
 
         return result is json like that
         {
-            "Number":"6583";
-            "Name":"Driver initiate a call through SWP";
-            "Differences":"SSTS describes that only when the vehicle is stopped can calls be made through SWP.
-            HMI requires "The vehicle can be shifted to any of the PRND drive modes."";
-            "Description":"Additionally SSTS describes:
-            - a numeric keyboard (Toggle dialpad via SWP to make a call, if the driver doesn't have this number in contacts,Enter the phone number on the dialpad to make a call.)
-            - displays the hotline number of roadside assistance call.";
-            "Complience Level":"NC";
+        "Number":"6583";
+        "Name":"Driver initiate a call through SWP";
+        "Differences":"SSTS describes that only when the vehicle is stopped can calls be made through SWP.
+        HMI requires "The vehicle can be shifted to any of the PRND drive modes."";
+        "Description":"Additionally SSTS describes:
+        - a numeric keyboard (Toggle dialpad via SWP to make a call, if the driver doesn't have this number in contacts,Enter the phone number on the dialpad to make a call.)
+        - displays the hotline number of roadside assistance call.";
+        "Complience Level":"NC";
         }
-        And json with difference between UC and STSS and grade of it and where did it occur in the text Preconditions, Main Scenario, Postconditions, Alternative Scenario
+        And json with difference between UC and STSS and grade of it and where did it occur in the text Preconditions, Main Scenario, Postconditions, Alternative Scenario. Category need to be one of this  Preconditions, Main Scenario, Postconditions, Alternative Scenario and NA. Each category can have several items.I need a field in json where more information is found in UC, STSS or both
     '''
 )
 

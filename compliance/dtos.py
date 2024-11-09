@@ -29,12 +29,22 @@ class InputReaderDTO:
 
 
 @dataclass(config=pydantic.ConfigDict(frozen=True, strict=True, extra='forbid'))
+class ModelAnswerDetailedDTO:
+    category: str
+    difference: str
+    difference_source: str
+    compliance_level: COMPLIANCE_LEVEL
+
+
+@dataclass(config=pydantic.ConfigDict(frozen=True, strict=True, extra='forbid'))
 class ModelOutputDTO:
     doc_number: int
     reference_name: str
     difference: str
     description: str
     compliance_level: COMPLIANCE_LEVEL
+    detailed_difference: list[ModelAnswerDetailedDTO] | None
+    model_answer_raw: str
 
 
 @dataclass(config=pydantic.ConfigDict(frozen=True, strict=True, extra='forbid'))
