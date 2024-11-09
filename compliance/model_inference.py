@@ -106,7 +106,7 @@ class ModelInference:
         answer = json.loads(answer[answer.find('{') : answer.rfind('}') + 1])
 
         detailed_difference = []
-        for detailed in answer['Details']:  # type: ignore
+        for detailed in answer['DifferencesDetail']:  # type: ignore
             detailed_difference.append(
                 ModelAnswerDetailedDTO(
                     category=detailed['Category'],  # type: ignore
