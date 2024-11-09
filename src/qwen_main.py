@@ -11,10 +11,10 @@ import torch
 app = FastAPI()
 
 # Load Qwen-like model and tokenizer (adjust paths/names as needed)
-model_name = "Qwen/Qwen2.5-14B-Instruct"
+model_name = "Qwen/Qwen2.5-7B-Instruct"
 tokenizer = AutoTokenizer.from_pretrained(model_name,
                                           torch_dtype=torch.float16)
-model = AutoModelForCausalLM.from_pretrained('/home/user1/.cache/huggingface/hub/models--Qwen--Qwen2.5-14B-Instruct/snapshots/cf98f3b3bbb457ad9e2bb7baf9a0125b6b88caa8').to('cuda:0')
+model = AutoModelForCausalLM.from_pretrained('/home/user1/.cache/huggingface/hub/models--Qwen--Qwen2.5-7B-Instruct/snapshots/bb46c15ee4bb56c5b63245ef50fd7637234d6f75').to('cuda:0')
 
 
 # Pydantic model for request
@@ -52,7 +52,7 @@ def ask_question(query: Query):
         
         # Decode generated response
         response = tokenizer.decode(generated_ids[0], 
-                                    skip_special_tokens=True)
+                                    skip_special_tokens=True)[0]
         
         return {"answer": response}
     except Exception as e:
@@ -61,4 +61,4 @@ def ask_question(query: Query):
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the QWEN2.5-14b AI API!"}
+    return {"message": "Welcome to the QWEN2.5-7B AI API!"}
