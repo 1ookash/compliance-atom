@@ -12,11 +12,12 @@
 !pyproject.toml
 !.env_example
 !.python-version
+!README.md
+!data/test.zip
 
 !*/**/*.py
 !*/**/*.sql
 !*/**/*.sh
-!*/**/*.json
 !*/**/*.ipynb
 !*/**/*.yml
 !*/**/*.yaml
@@ -24,15 +25,17 @@
 !*/**/*.dockerfile
 !*/**/*.conf
 !*/**/*.config
+!*/**/*tar.gz
+!*/**/*.whl
 # сверху перед этой строкой добавлять неисключенные расширения текстовых файлов
 
 !*/**/
-!src/
-!config/
+!compliance/
 !notebooks/
 !devops/
 !data/
 !tests/
+!dist/
 # сверху перед этой строкой добавлять неисключенные директории
 
 config/*dev.json

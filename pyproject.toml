@@ -1,15 +1,18 @@
 [tool.poetry]
-package-mode = false
+package-mode = true
 name = "compliance-atom"
 version = "1.0.0"
 description = "Automatic compliance"
 authors = [
     "Lukash Vladislav <v1r71k@yandex.ru>",
 	"akkrevsky <@akkrevsky>",
-	"vkireev1982"
+	"vkireev1982",
+    "holliwid",
+    "inanbanan"
 ]
 license = "MIT"
 readme = "README.md"
+packages = [{include = "compliance"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -18,6 +21,9 @@ numpy = ">=1.26,<2.0"
 pyarrow = ">=11.0,<12.0"
 pydantic = ">=2.7,<3.0"
 environs = "^11.0.0"
+python-docx = "^1.1.2"
+openpyxl = "^3.1.5"
+requests = "^2.32.3"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.10.1"
@@ -34,12 +40,32 @@ pandas-stubs = "^2.2.2.240603"
 matplotlib = "^3.9.1"
 seaborn = "^0.13.2"
 tqdm = "^4.66.5"
+scikit-learn = "^1.5.2"
+
+[tool.poetry.group.qwen]
+optional = true
+
+[tool.poetry.group.qwen.dependencies]
+torch = "^2.5.1"
+transformers = "^4.46.2"
+accelerate = "^1.1.1"
+fastapi = "^0.115.4"
+uvicorn = "^0.32.0"
+auto-gptq = "^0.7.1"
+optimum = "^1.23.3"
+
+[tool.poetry.scripts]
+compliance = 'compliance.main:main'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.2.2"
 
 [tool.flake8]
-max-line-length = 100
+max-line-length = 400
 exclude = [
     ".git",
     "__pycache__",
