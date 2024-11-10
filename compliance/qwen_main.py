@@ -5,6 +5,8 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from .config import CONFIG
 
+assert CONFIG.llm_absolute_fpath is not None
+
 # TODO: сделать авторизацию по токену
 # TODO: вынести пути в конфиг (закрыть порты ufw)
 # TODO: сделать разные роуты для сохранения диалога/ нового

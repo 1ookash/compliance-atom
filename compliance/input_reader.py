@@ -26,10 +26,10 @@ class InputReader:
         with tempfile.TemporaryDirectory() as tempdir:
             zipfile.ZipFile(input_file_path).extractall(tempdir)
 
-            for source_path in self._glob_paths(root_dir=tempdir, pathname='*/*/*/SSTS*.docx'):
+            for source_path in self._glob_paths(root_dir=tempdir, name='SSTS'):
                 source_result[self._extract_doc_number(source_path)] = self._read_docx(source_path)
 
-            for reference_path in self._glob_paths(root_dir=tempdir, pathname='*/*/*/UC*.docx'):
+            for reference_path in self._glob_paths(root_dir=tempdir, name='UC'):
                 reference_result[self._extract_doc_number(reference_path)] = self._read_docx(
                     reference_path
                 )
@@ -85,8 +85,14 @@ class InputReader:
         except IndexError as error:
             raise RuntimeError('couldn\'t extract document number') from error
 
-    def _glob_paths(self, root_dir: str, pathname: str) -> list[str]:
-        result = [os.path.join(root_dir, path) for path in glob.glob(pathname, root_dir=root_dir)]
+    def _glob_paths(self, root_dir: str, name: str) -> list[str]:
+        result = [
+            os.path.join(root_dir, path)
+            for path in [
+                *glob.glob(f'*/**/{name}*.docx', root_dir=root_dir, recursive=True),
+                *glob.glob(f'{name}*.docx', root_dir=root_dir, recursive=False),
+            ]
+        ]
         if len(result) == 0:
             raise RuntimeError('couldn\'t find paths')
         return result
