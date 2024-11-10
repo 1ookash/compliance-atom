@@ -67,7 +67,7 @@ class ModelInference:
         )
         self._logger.debug(
             'response',
-            params_please={'response status': response.status_code},
+            params_please={'response status': response.status_code, 'response text': response.text},
         )
 
         try:
@@ -97,7 +97,7 @@ class ModelInference:
             )
 
         self._logger.debug(
-            'inference end', params_please={'answer': json.loads(response.text)['answer']}
+            'inference end',
         )
         return result
 
