@@ -1,10 +1,5 @@
-import json
-from dataclasses import asdict
-
-import numpy
-
-from .dtos import MetricCalculatorDTO, ModelOutputDTO
-from .tools import logger
+from .dtos import MetricCalculatorDTO, ModelAnswerDetailedDTO, ModelOutputDTO
+from .tools import logger, printer
 
 
 class MetricCalculator:
@@ -15,9 +10,27 @@ class MetricCalculator:
         self,
         data: ModelOutputDTO,
     ) -> MetricCalculatorDTO:
-        data_dict = asdict(data)
-        metric_count = MetricCount(data_dict)
-        final_scores = metric_count.run()
+        self._logger.debug('calc begin')
+        if data.model_answer_raw is None and data.compliance_level == 'NA':
+            self._logger.warning(
+                'Пропуск подсчета метрики из-за отсутствия ответа от модели',
+                params_please={'document number': data.doc_number},
+            )
+            return MetricCalculatorDTO(
+                doc_number=data.doc_number,
+                reference_name=data.reference_name,
+                difference=data.difference,
+                description=data.description,
+                compliance_level=data.compliance_level,
+                value=0,
+            )
+        assert data.detailed_differences is not None
+
+        eval_ref = self._evaluate_reference(detailed_differences=data.detailed_differences)
+        self._logger.debug(
+            'evaluate reference end',
+            params_please={'evaluate reference result': printer.Printer.pretty_print(eval_ref)},
+        )
 
         return MetricCalculatorDTO(
             doc_number=data.doc_number,
@@ -25,53 +38,27 @@ class MetricCalculator:
             difference=data.difference,
             description=data.description,
             compliance_level=data.compliance_level,
-            value=final_scores.get('grade'),
+            value=self._evaluate_difference(eval_ref=eval_ref),
         )
 
+    def _evaluate_reference(
+        self, detailed_differences: list[ModelAnswerDetailedDTO]
+    ) -> dict[str, int]:
+        result = {
+            'Preconditions': 0,
+            'Main Scenario': 0,
+            'Postconditions': 0,
+            'Alternative Scenario': 0,
+            'Exit Conditions': 0,
+        }
 
-class MetricCount:
-    def __init__(self, json):
-        self.file_path = json
-        self.documents = []
-        self._logger = logger.nest_obj_logger(self)
+        for detail in detailed_differences:
+            if detail.category in result.keys():
+                result[detail.category] += 1
 
-    def process_json(self):
-        """Обрабатывает JSON-файл и возвращает объекты."""
-        with open(self.file_path, 'r', encoding='utf-8') as file:
-            data = json.load(file)
-        return data['objects']
+        return result
 
-    def evaluate_specifications(self, specifications):
-        """Оценивает спецификации и подсчитывает категории."""
-        documents = {}
-
-        number = specifications["doc_number"]
-
-        if number not in documents:
-            documents[number] = {
-                "Preconditions": 0,
-                "Main Scenario": 0,
-                "Postconditions": 0,
-                "Alternative Scenario": 0,
-                "Exit Conditions": 0,
-            }
-
-        differences_details = specifications.get("detailed_difference", [])
-
-        for detail in differences_details:
-            category = detail.get("category")
-            if category in documents[number]:
-                documents[number][category] += 1
-
-        results_array = []
-        for number, counts in documents.items():
-            result_entry = {"Number": number, "Counts": counts}
-            results_array.append(result_entry)
-
-        return results_array
-
-    def evaluate_difference(self, documents):
-        """Оценивает различия в спецификациях."""
+    def _evaluate_difference(self, eval_ref: dict[str, int]) -> float:
         paragraph_weights = {
             'Preconditions': 0.3,
             'Main Scenario': 0.25,
@@ -79,52 +66,25 @@ class MetricCount:
             'Alternative Scenario': 0.15,
             'Exit Conditions': 0.1,
         }
-        compliance_scale = {'FC': 1, 'LC': 0.75, 'PC': 0.5, 'MN': 0.25, 'NC': 0}
-        results = {}
+        compliance_scale = {'FC': 1, 'LC': 0.75, 'PC': 0.5, 'NC': 0.25, 'NA': 0}
 
-        for document in documents:
-            differences = document['Counts']
+        total_grade = 0.0
+        total_weight = 0.0
 
-            total_grade = 0
-            total_weight = 0
+        for category, changes in eval_ref.items():
+            grade = 'FC'
+            if changes >= 5:
+                grade = 'NC'
+            if changes >= 3:
+                grade = 'PC'
+            if changes >= 1:
+                grade = 'LC'
 
-            for category, changes in differences.items():
-                if changes >= 5:
-                    grade = 'NC'
-                elif changes >= 3:
-                    grade = 'PC'
-                elif changes >= 1:
-                    grade = 'LC'
-                else:
-                    grade = 'FC'
+            weight = paragraph_weights[category]
+            total_grade += compliance_scale[grade] * weight
+            total_weight += weight
 
-                numerical_grade = compliance_scale[grade]
-                weight = paragraph_weights.get(category, 0)
+        if total_weight > 0:
+            return total_grade / total_weight
 
-                total_grade += numerical_grade * weight
-                total_weight += weight
-
-            if total_weight > 0:
-                overall_grade = total_grade / total_weight
-            else:
-                overall_grade = 0
-
-            results['grade'] = overall_grade
-
-        return results
-
-    def run(self):
-        """Запускает процесс обработки и оценки."""
-        try:
-            specifications = self.file_path
-            self.documents = self.evaluate_specifications(specifications)
-            results = self.evaluate_difference(self.documents)
-
-            full_score = {
-                doc_number: numpy.round(score, 2) for doc_number, score in results.items()
-            }
-            return full_score
-
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return {}
+        return 0.0

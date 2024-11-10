@@ -23,13 +23,7 @@ pydantic = ">=2.7,<3.0"
 environs = "^11.0.0"
 python-docx = "^1.1.2"
 openpyxl = "^3.1.5"
-torch = "^2.5.1"
-transformers = "^4.46.2"
-accelerate = "^1.1.1"
-fastapi = "^0.115.4"
-uvicorn = "^0.32.0"
-auto-gptq = "^0.7.1"
-optimum = "^1.23.3"
+requests = "^2.32.3"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.10.1"
@@ -46,6 +40,18 @@ pandas-stubs = "^2.2.2.240603"
 matplotlib = "^3.9.1"
 seaborn = "^0.13.2"
 tqdm = "^4.66.5"
+
+[tool.poetry.group.qwen]
+optional = true
+
+[tool.poetry.group.qwen.dependencies]
+torch = "^2.5.1"
+transformers = "^4.46.2"
+accelerate = "^1.1.1"
+fastapi = "^0.115.4"
+uvicorn = "^0.32.0"
+auto-gptq = "^0.7.1"
+optimum = "^1.23.3"
 
 [tool.poetry.scripts]
 compliance = 'compliance.main:main'

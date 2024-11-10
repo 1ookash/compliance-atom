@@ -42,8 +42,8 @@ class ModelOutputDTO:
     difference: str
     description: str
     compliance_level: COMPLIANCE_LEVEL
-    detailed_difference: list[ModelAnswerDetailedDTO] | None
-    model_answer_raw: str
+    detailed_differences: list[ModelAnswerDetailedDTO] | None
+    model_answer_raw: str | None
 
 
 @dataclass(config=pydantic.ConfigDict(frozen=True, strict=True, extra='forbid'))

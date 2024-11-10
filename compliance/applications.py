@@ -1,9 +1,12 @@
 import argparse
 import os
 import sqlite3
+from datetime import datetime
+
+from pydantic import RootModel
 
 from .config import CONFIG
-from .dtos import OutputCreatorDTO
+from .dtos import ModelOutputDTO, OutputCreatorDTO
 from .input_reader import InputReader
 from .metric_calculator import MetricCalculator
 from .model_inference import ModelInference
@@ -50,11 +53,18 @@ class Application:
         self._input_file_fpath = arguments['input_file_fpath']
         self._output_file_fpath = arguments['output_file_fpath']
 
+        self._model_dto_dir_path = os.path.join(
+            'data', f'app_run_{datetime.strftime(datetime.now(), "%Y_%m_%dT%H_%M_%S")}'
+        )
+        if not os.path.exists(self._model_dto_dir_path):
+            os.makedirs(self._model_dto_dir_path)
+
         self._logger.info(
             'init',
             params_please={
                 'input file fpath': self._input_file_fpath,
                 'output file fpath': self._output_file_fpath,
+                'model dto dir path': self._model_dto_dir_path,
             },
         )
 
@@ -90,6 +100,15 @@ class Application:
         output_dto_result = []
         for input_data in input_dto.result:
             model_dto = self._model_inference.inference(input_data)
+            with open(
+                os.path.join(self._model_dto_dir_path, f'{model_dto.doc_number}-dto.json'),
+                'w',
+                encoding='utf-8',
+            ) as file:
+                file.write(RootModel[ModelOutputDTO](model_dto).model_dump_json())
+            self._logger.debug(
+                'model dto saved', params_please={'document number': model_dto.doc_number}
+            )
             output_dto_result.append(self._metric_calculator.calc(model_dto))
 
         output_df = self._output_creator.create(
@@ -108,3 +127,5 @@ class Application:
             output_df.to_csv(self._output_file_fpath)
 
         self._logger.debug('run end')
+
+        logger.stop()

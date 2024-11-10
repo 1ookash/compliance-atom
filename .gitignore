@@ -17,7 +17,6 @@
 !*/**/*.py
 !*/**/*.sql
 !*/**/*.sh
-!*/**/*.json
 !*/**/*.ipynb
 !*/**/*.yml
 !*/**/*.yaml
@@ -31,7 +30,6 @@
 
 !*/**/
 !compliance/
-!config/
 !notebooks/
 !devops/
 !data/

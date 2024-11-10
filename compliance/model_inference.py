@@ -30,8 +30,8 @@ class ModelInference:
                 difference='ssts hasn\'t info about this',
                 description='',
                 compliance_level='NA',
-                model_answer_raw='',
-                detailed_difference=None,
+                model_answer_raw=None,
+                detailed_differences=None,
             )
 
         system_promt = system_promt_template.strip(' \t\r\n').replace('\n\n', '\n')
@@ -86,8 +86,8 @@ class ModelInference:
                 difference='ssts hasn\'t info about this',
                 description='',
                 compliance_level='NA',
-                model_answer_raw='',
-                detailed_difference=None,
+                model_answer_raw=None,
+                detailed_differences=None,
             )
 
         if data.doc_number != result.doc_number:
@@ -117,9 +117,9 @@ class ModelInference:
         answer = json.loads(answer_raw)['answer']
         answer = json.loads(answer[answer.find('{') : answer.rfind('}') + 1])
 
-        detailed_difference = []
+        detailed_differences = []
         for detailed in answer['DifferencesDetail']:  # type: ignore
-            detailed_difference.append(
+            detailed_differences.append(
                 ModelAnswerDetailedDTO(
                     category=detailed['Category'],  # type: ignore
                     difference=detailed['Difference'],  # type: ignore
@@ -133,6 +133,6 @@ class ModelInference:
             difference=answer['Differences'],  # type: ignore
             description=answer['Description'],  # type: ignore
             compliance_level=answer['Compliance Level'],  # type: ignore
-            detailed_difference=detailed_difference,
+            detailed_differences=detailed_differences,
             model_answer_raw=answer_raw,
         )
