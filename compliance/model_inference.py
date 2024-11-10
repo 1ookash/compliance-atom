@@ -1,5 +1,6 @@
 # mypy: ignore-errors
 import json
+from json.decoder import JSONDecodeError
 
 import requests
 
@@ -48,6 +49,7 @@ class ModelInference:
         self._logger.debug(
             'system and user promt created, sending request',
             params_please={
+                'document number': data.doc_number,
                 'system promt tokens count': len(system_promt),
                 'user promt tokens count': len(user_promt),
             },
@@ -72,11 +74,21 @@ class ModelInference:
 
         try:
             result = self._parse_anwser(response.text)
-        except KeyError as error:
-            self._logger.exception(
+        except (KeyError, JSONDecodeError):
+            # FIXME: пока что добавил заглушку на неудачный парсинг ответа от модели
+            self._logger.warning(
                 'Не удалось распарсить ответ', params_please={'answer': response.text}
             )
-            raise RuntimeError('Не удалось распарсить ответ') from error
+            # raise RuntimeError('Не удалось распарсить ответ') from error
+            return ModelOutputDTO(
+                doc_number=data.doc_number,
+                reference_name=data.reference_name,
+                difference='ssts hasn\'t info about this',
+                description='',
+                compliance_level='NA',
+                model_answer_raw='',
+                detailed_difference=None,
+            )
 
         if data.doc_number != result.doc_number:
             self._logger.warning(

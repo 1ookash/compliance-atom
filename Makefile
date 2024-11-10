@@ -13,9 +13,9 @@ test-env:
 	@echo "API_TOKEN is $(LLM_API_TOKEN)"
 
 run-llm:
-	@cd src; \
+	@cd compliance; \
 	nohup uvicorn qwen_main:app --reload --host 0.0.0.0 --port 8000 2>&1 &
-	# port forward 
+	# port forward
 	# netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=8000 connectaddress=<WSL_IP> connectport=8000
 	# port proxy list
 	# netsh interface portproxy show all
