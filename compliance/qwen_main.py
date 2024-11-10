@@ -1,20 +1,21 @@
+import torch
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
-import torch
 
-#TODO: сделать авторизацию по токену
-#TODO: вынести пути в конфиг (закрыть порты ufw)
-#TODO: сделать разные роуты для сохранения диалога/ нового
+# TODO: сделать авторизацию по токену
+# TODO: вынести пути в конфиг (закрыть порты ufw)
+# TODO: сделать разные роуты для сохранения диалога/ нового
 
 # Initialize FastAPI app
 app = FastAPI()
 
 # Load Qwen-like model and tokenizer (adjust paths/names as needed)
 model_name = "Qwen/Qwen2.5-7B-Instruct"
-tokenizer = AutoTokenizer.from_pretrained(model_name,
-                                          torch_dtype=torch.float16)
-model = AutoModelForCausalLM.from_pretrained('/home/user1/.cache/huggingface/hub/models--Qwen--Qwen2.5-7B-Instruct/snapshots/bb46c15ee4bb56c5b63245ef50fd7637234d6f75').to('cuda:0')
+tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.float16)
+model = AutoModelForCausalLM.from_pretrained(
+    '/home/user1/.cache/huggingface/hub/models--Qwen--Qwen2.5-7B-Instruct/snapshots/bb46c15ee4bb56c5b63245ef50fd7637234d6f75'
+).to('cuda:0')
 
 
 # Pydantic model for request
@@ -32,13 +33,11 @@ def ask_question(query: Query):
         # Create a standalone dialog context for each query
         messages = [
             {"role": "system", "content": query.system_promt},
-            {"role": "user", "content": query.user_promt}
+            {"role": "user", "content": query.user_promt},
         ]
 
         # Convert messages to input text for the model
-        text = tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True
-        )
+        text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
 
         # Tokenize and prepare inputs for the model
         model_inputs = tokenizer([text], return_tensors="pt").to('cuda:0')
@@ -47,15 +46,19 @@ def ask_question(query: Query):
             **model_inputs,
             max_new_tokens=2046,
             do_sample=True,  # Optional: enable sampling for more varied responses
-            temperature=0.7  # Adjust temperature for creativity (lower = more focused, higher = more creative)
+            temperature=0.7,  # Adjust temperature for creativity (lower = more focused, higher = more creative)
         )
-        generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)]
-        
+        generated_ids = [
+            output_ids[len(input_ids) :]
+            for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
+        ]
+
         # Decode generated response
-        response = tokenizer.decode(generated_ids[0],
-                                    skip_special_tokens=True,
-                                    )
-        
+        response = tokenizer.decode(
+            generated_ids[0],
+            skip_special_tokens=True,
+        )
+
         return {"answer": response}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

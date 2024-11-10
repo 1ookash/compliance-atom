@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pandas
 
 from .dtos import OutputCreatorDTO
@@ -13,6 +15,7 @@ class OutputCreator:
             'Description': [''] * data.doc_cnt,
             'Compliance Level': [''] * data.doc_cnt,
             'Value': [0.0] * data.doc_cnt,
+            'Timestamp': [datetime.now()] * data.doc_cnt,
         }
 
         for i, res in enumerate(data.result):

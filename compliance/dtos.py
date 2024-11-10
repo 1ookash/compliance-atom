@@ -15,7 +15,9 @@ COMPLIANCE_LEVEL = (
 @dataclass(config=pydantic.ConfigDict(frozen=True, strict=True, extra='forbid'))
 class ModelInputDTO:
     reference: str
+    reference_tokens_cnt: int
     source: str | None
+    source_tokens_cnt: int | None
     reference_name: str
     doc_number: int
 
@@ -27,12 +29,21 @@ class InputReaderDTO:
 
 
 @dataclass(config=pydantic.ConfigDict(frozen=True, strict=True, extra='forbid'))
+class ModelAnswerDetailedDTO:
+    category: str
+    difference: str
+    difference_source: str
+
+
+@dataclass(config=pydantic.ConfigDict(frozen=True, strict=True, extra='forbid'))
 class ModelOutputDTO:
     doc_number: int
     reference_name: str
     difference: str
     description: str
     compliance_level: COMPLIANCE_LEVEL
+    detailed_difference: list[ModelAnswerDetailedDTO] | None
+    model_answer_raw: str
 
 
 @dataclass(config=pydantic.ConfigDict(frozen=True, strict=True, extra='forbid'))
@@ -42,7 +53,7 @@ class MetricCalculatorDTO:
     difference: str
     description: str
     compliance_level: COMPLIANCE_LEVEL
-    value: float
+    value: float | None
 
 
 @dataclass(config=pydantic.ConfigDict(frozen=True, strict=True, extra='forbid'))
