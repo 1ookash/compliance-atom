@@ -26,4 +26,4 @@ stop-llm:
 	@pkill -9 -f uvicorn
 
 run-app:
-	@poetry run compliance -i data/val.zip -o data/val_output.xlsx > ".logs/app_stdout_$(shell date --utc +%Y_%m_%dT%H_%M_%S).log"
+	@poetry run compliance -i data/test.zip -o data/test_output.xlsx > ".logs/app_stdout_$(shell date --utc +%Y_%m_%dT%H_%M_%S).log"

@@ -122,9 +122,9 @@ class Application:
         self._db_connect.commit()
         self._db_connect.close()
         if self._output_file_fpath[self._output_file_fpath.rfind('.') + 1 :] == 'xlsx':
-            output_df.to_excel(self._output_file_fpath)
+            output_df.to_excel(self._output_file_fpath, index=False)
         if self._output_file_fpath[self._output_file_fpath.rfind('.') + 1 :] == 'csv':
-            output_df.to_csv(self._output_file_fpath)
+            output_df.to_csv(self._output_file_fpath, index=False, sep=',')
 
         self._logger.debug('run end')
 

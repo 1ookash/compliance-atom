@@ -13,7 +13,7 @@ class OutputCreator:
             'Name': [''] * data.doc_cnt,
             'Differences': [''] * data.doc_cnt,
             'Description': [''] * data.doc_cnt,
-            'Compliance Level': [''] * data.doc_cnt,
+            'Complience Level': [''] * data.doc_cnt,
             'Value': [0.0] * data.doc_cnt,
             'Timestamp': [datetime.now()] * data.doc_cnt,
         }
@@ -23,7 +23,7 @@ class OutputCreator:
             result['Name'][i] = res.reference_name
             result['Differences'][i] = res.difference
             result['Description'][i] = res.description
-            result['Compliance Level'][i] = res.compliance_level
+            result['Complience Level'][i] = res.compliance_level
             result['Value'][i] = res.value
 
         return pandas.DataFrame(data=result)

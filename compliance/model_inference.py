@@ -98,6 +98,15 @@ class ModelInference:
                     'document number by LLM': result.doc_number,
                 },
             )
+            result = ModelOutputDTO(
+                doc_number=data.doc_number,
+                reference_name=result.reference_name,
+                difference=result.difference,
+                description=result.description,
+                compliance_level=result.compliance_level,
+                detailed_differences=result.detailed_differences,
+                model_answer_raw=result.model_answer_raw,
+            )
 
         if data.reference_name.lower() != result.reference_name.lower():
             self._logger.warning(

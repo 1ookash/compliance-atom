@@ -1,3 +1,5 @@
+import math
+
 from .dtos import MetricCalculatorDTO, ModelAnswerDetailedDTO, ModelOutputDTO
 from .tools import logger, printer
 
@@ -31,14 +33,29 @@ class MetricCalculator:
             'evaluate reference end',
             params_please={'evaluate reference result': printer.Printer.pretty_print(eval_ref)},
         )
+        score = self._evaluate_difference(eval_ref=eval_ref)
+        self._logger.debug(
+            'evaluate difference end',
+            params_please={'evaluate difference result': score},
+        )
+        if score <= 0.15:
+            compliance_level = 'FC'
+        elif score <= 0.24:
+            compliance_level = 'LC'
+        elif score <= 0.35:
+            compliance_level = 'PC'
+        elif score <= 1:
+            compliance_level = 'NC'
+        else:
+            compliance_level = 'NA'
 
         return MetricCalculatorDTO(
             doc_number=data.doc_number,
             reference_name=data.reference_name,
             difference=data.difference,
             description=data.description,
-            compliance_level=data.compliance_level,
-            value=self._evaluate_difference(eval_ref=eval_ref),
+            compliance_level=compliance_level,  # type: ignore
+            value=score,
         )
 
     def _evaluate_reference(
@@ -48,12 +65,16 @@ class MetricCalculator:
             'Preconditions': 0,
             'Main Scenario': 0,
             'Postconditions': 0,
+            'Alternative Scenario A': 0,
+            'Alternative Scenario B': 0,
+            'Alternative Scenario C': 0,
+            'Alternative Scenarios': 0,
             'Alternative Scenario': 0,
             'Exit Conditions': 0,
         }
 
         for detail in detailed_differences:
-            if detail.category in result.keys():
+            if detail.category in result:
                 result[detail.category] += 1
 
         return result
@@ -61,30 +82,35 @@ class MetricCalculator:
     def _evaluate_difference(self, eval_ref: dict[str, int]) -> float:
         paragraph_weights = {
             'Preconditions': 0.3,
-            'Main Scenario': 0.25,
+            'Main Scenario': 0.3,
             'Postconditions': 0.2,
-            'Alternative Scenario': 0.15,
+            'Alternative Scenario A': 0.2,
+            'Alternative Scenario B': 0.2,
+            'Alternative Scenario C': 0.2,
+            'Alternative Scenario': 0.2,
+            'Alternative Scenarios': 0.2,
             'Exit Conditions': 0.1,
         }
-        compliance_scale = {'FC': 1, 'LC': 0.75, 'PC': 0.5, 'NC': 0.25, 'NA': 0}
+        # compliance_scale = {'FC': 1, 'LC': 0.75, 'PC': 0.5, 'NC': 0.25, 'NA': 0}
 
         total_grade = 0.0
-        total_weight = 0.0
 
         for category, changes in eval_ref.items():
-            grade = 'FC'
-            if changes >= 5:
-                grade = 'NC'
-            if changes >= 3:
-                grade = 'PC'
-            if changes >= 1:
-                grade = 'LC'
+            total_grade += paragraph_weights[category] * changes
 
-            weight = paragraph_weights[category]
-            total_grade += compliance_scale[grade] * weight
-            total_weight += weight
+            # grade = 'FC'
+            # if changes >= 5:
+            #     grade = 'NC'
+            # if changes >= 3:
+            #     grade = 'PC'
+            # if changes >= 1:
+            #     grade = 'LC'
 
-        if total_weight > 0:
-            return total_grade / total_weight
+        #     weight = paragraph_weights[category]
+        #     total_grade += compliance_scale[grade] * weight
+        #     total_weight += weight
 
-        return 0.0
+        # if total_weight > 0:
+        #     return total_grade / total_weight
+
+        return (1.0 / (1 + math.pow(math.e, -total_grade))) - 0.5
